@@ -56,9 +56,8 @@ const App = () => {
                 setBoard(data.board);
                 setGameStatus(data.game_status);
                 setTurn(data.turn);
-
+                setWinner(data.winner);
             } catch (error) {
-                console.error('Error with drop phase move:', error);
                 alert(error.response?.data?.detail || 'Invalid move.');
             }
         } else {
@@ -79,9 +78,8 @@ const App = () => {
                     setBoard(data.board);
                     setGameStatus(data.game_status);
                     setTurn(data.turn);
-
+                    setWinner(data.winner);
                 } catch (error) {
-                    console.error('Error with move phase move:', error);
                     alert(error.response?.data?.detail || 'Invalid move.');
                 } finally {
                     setSelectedCell(null); // Clear the selected cell

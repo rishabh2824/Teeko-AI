@@ -199,7 +199,7 @@ class TeekoPlayer:
         if self.game_value(state) != 0: return self.game_value(state), state
 
         # Check if max depth is reached and return the heuristic value of current state
-        if depth >= 4: return self.getHeuristic(state, self.my_piece)
+        if depth >= 3: return self.getHeuristic(state, self.my_piece)
 
         # Initialize max value to -infinity
         value = float('-inf')
@@ -223,7 +223,7 @@ class TeekoPlayer:
 
     def min_value(self, state, depth, alpha, beta):
         if self.game_value(state) != 0: return self.game_value(state), state
-        if depth >= 4: return self.getHeuristic(state, self.opp)
+        if depth >= 3: return self.getHeuristic(state, self.opp)
         value, bestState = float('inf'), state
         for s in self.generateSuccessors(state, self.opp):
             sValue, _ = self.max_value(s, depth + 1, alpha, beta)

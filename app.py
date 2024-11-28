@@ -15,19 +15,17 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://teekoai.netlify.app/"],
+    allow_origins=["https://teekoai.netlify.app", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["Cache-Control"],
 )
 
 
-@app.middleware("http")
-async def add_no_cache_header(request: Request, call_next):
-    response = await call_next(request)
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, proxy-revalidate"
-    return response
+@app.options("/{path_name:path}")
+async def preflight(path_name: str):
+    return {"message": "Preflight request handled"}
+
 
 # Initialize the AI with the default difficulty
 ai = TeekoPlayer(depth=ai_difficulty)

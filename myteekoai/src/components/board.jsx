@@ -3,7 +3,6 @@ import '../App.css'; // Add styling
 
 const Board = ({ board, onCellClick, dropPhase }) => {
     useEffect(() => {
-        console.log('Board updated:', board);
     }, [board]);
 
     return (

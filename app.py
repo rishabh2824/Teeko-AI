@@ -9,6 +9,7 @@ from starlette.requests import Request
 
 # Import the TeekoPlayer class
 from game import TeekoPlayer
+ai_difficulty = 3  # Default to Beginner
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG)
@@ -32,8 +33,8 @@ async def add_no_cache_header(request: Request, call_next):
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, proxy-revalidate"
     return response
 
-# Initialize the AI
-ai = TeekoPlayer()
+# Initialize the AI with the default difficulty
+ai = TeekoPlayer(depth=ai_difficulty)
 
 
 # Models
@@ -55,6 +56,9 @@ class GameStateResponse(BaseModel):
     turn: str
     opponent_piece: str
     winner: Optional[str]
+
+class DifficultyRequest(BaseModel):
+    difficulty: str
 
 
 @app.get("/", response_model=GameStateResponse)
@@ -181,10 +185,31 @@ async def opponent_move(request: MoveRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@app.post("/set-difficulty/")
+async def set_difficulty(request: DifficultyRequest):
+    global ai, ai_difficulty
+
+    difficulty_map = {
+        "beginner": 3,
+        "intermediate": 4,
+        "expert": 5,
+    }
+
+    if request.difficulty not in difficulty_map:
+        raise HTTPException(status_code=400, detail="Invalid difficulty level")
+
+    ai_difficulty = difficulty_map[request.difficulty]
+    ai.set_difficulty(ai_difficulty)
+
+    print(f"AI difficulty updated to {ai_difficulty} ({request.difficulty})")
+
+    return {"message": f"Difficulty set to {request.difficulty} (depth {ai_difficulty})"}
+
+
 @app.post("/reset/")
 async def reset_game():
     global ai
-    ai = TeekoPlayer()
+    ai = TeekoPlayer(depth=ai_difficulty)
     return {
         "board": ai.board,
         "turn": "AI",

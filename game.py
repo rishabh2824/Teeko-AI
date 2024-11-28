@@ -1,4 +1,3 @@
-import logging
 import random
 import copy
 import numpy as np
@@ -8,14 +7,18 @@ class TeekoPlayer:
     pieces = ['b', 'r']
 
     # Teeko player object
-    def __init__(self, ai_first=True):
+    def __init__(self, ai_first=True, depth=3):
         self.board = [[' ' for _ in range(5)] for _ in range(5)]
         self.my_piece = 'b' if ai_first else 'r'
         self.opp = 'r' if ai_first else 'b'
         self.move_count = 0  # Initialize the move counter
+        self.depth = depth  # Depth for Minimax
+
+    # Method to update AI difficulty
+    def set_difficulty(self, depth):
+        self.depth = depth
 
     def opponent_move(self, move):
-        logging.debug(f"Processing opponent move: {move}")
 
         # Check if it's a move phase (not drop phase)
         if len(move) > 1:
@@ -199,7 +202,7 @@ class TeekoPlayer:
         if self.game_value(state) != 0: return self.game_value(state), state
 
         # Check if max depth is reached and return the heuristic value of current state
-        if depth >= 3: return self.getHeuristic(state, self.my_piece)
+        if depth >= self.depth: return self.getHeuristic(state, self.my_piece)
 
         # Initialize max value to -infinity
         value = float('-inf')
@@ -223,7 +226,7 @@ class TeekoPlayer:
 
     def min_value(self, state, depth, alpha, beta):
         if self.game_value(state) != 0: return self.game_value(state), state
-        if depth >= 3: return self.getHeuristic(state, self.opp)
+        if depth >= self.depth: return self.getHeuristic(state, self.opp)
         value, bestState = float('inf'), state
         for s in self.generateSuccessors(state, self.opp):
             sValue, _ = self.max_value(s, depth + 1, alpha, beta)

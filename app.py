@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
-import logging
 import json
 from starlette.requests import Request
 
@@ -10,9 +9,6 @@ from starlette.requests import Request
 # Import the TeekoPlayer class
 from game import TeekoPlayer
 ai_difficulty = 3  # Default to Beginner
-
-# Setup logging
-logging.basicConfig(level=logging.DEBUG)
 
 app = FastAPI()
 

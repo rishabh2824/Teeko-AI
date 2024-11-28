@@ -55,9 +55,7 @@ export const resetGame = async () => {
 
 export const setDifficulty = async (difficulty) => {
     try {
-        console.log("The difficulty is " + difficulty);
         const response = await axiosInstance.post('/set-difficulty/', { difficulty });
-        console.log("response from backend " + JSON.stringify(response.data, null, 2));
         return response.data;
     } catch (error) {
         throw handleApiError(error);

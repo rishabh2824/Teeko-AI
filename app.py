@@ -22,11 +22,6 @@ app.add_middleware(
 )
 
 
-@app.options("/{path_name:path}")
-async def preflight(path_name: str):
-    return {"message": "Preflight request handled"}
-
-
 # Initialize the AI with the default difficulty
 ai = TeekoPlayer(depth=ai_difficulty)
 
@@ -62,7 +57,7 @@ async def get_game_state():
     game_value = ai.game_value(ai.board)
 
     # Check if the game is over or draw condition is met
-    if game_value == 0 and ai.move_count >= 30:
+    if game_value == 0 and ai.move_count >= 50:
         game_status = "over"
         winner = "Draw"
     else:
@@ -96,7 +91,7 @@ async def ai_move():
         raise HTTPException(status_code=400, detail="Game is already over.")
 
     # Check for draw condition
-    if ai.move_count >= 30:
+    if ai.move_count >= 50:
         return {
             "board": ai.board,
             "move": [],
@@ -122,7 +117,7 @@ async def ai_move():
     winner = "AI" if game_value == 1 else "Opponent" if game_value == -1 else None
 
     # Check for draw condition again after the AI's move
-    if ai.move_count >= 30 and winner is None:
+    if ai.move_count >= 50 and winner is None:
         winner = "Draw"
         game_status = "over"
 
@@ -143,7 +138,7 @@ async def opponent_move(request: MoveRequest):
     move = request.move
 
     # Check for draw condition
-    if ai.move_count >= 30:
+    if ai.move_count >= 50:
         return {
             "board": ai.board,
             "move": [],
@@ -161,7 +156,7 @@ async def opponent_move(request: MoveRequest):
         winner = "AI" if game_value == 1 else "Opponent" if game_value == -1 else None
 
         # Check for draw condition again after the opponent's move
-        if ai.move_count >= 30 and winner is None:
+        if ai.move_count >= 50 and winner is None:
             winner = "Draw"
             game_status = "over"
 
@@ -185,8 +180,7 @@ async def set_difficulty(request: DifficultyRequest):
 
     difficulty_map = {
         "beginner": 3,
-        "intermediate": 4,
-        "expert": 5,
+        "expert": 4,
     }
 
     if request.difficulty not in difficulty_map:
@@ -194,8 +188,6 @@ async def set_difficulty(request: DifficultyRequest):
 
     ai_difficulty = difficulty_map[request.difficulty]
     ai.set_difficulty(ai_difficulty)
-
-    print(f"AI difficulty updated to {ai_difficulty} ({request.difficulty})")
 
     return {"message": f"Difficulty set to {request.difficulty} (depth {ai_difficulty})"}
 

@@ -33,12 +33,6 @@ const HomePage = () => {
                 </button>
                 <button
                     className="difficulty-button"
-                    onClick={() => handleDifficultyClick('intermediate')}
-                >
-                    Intermediate
-                </button>
-                <button
-                    className="difficulty-button"
                     onClick={() => handleDifficultyClick('expert')}
                 >
                     Expert
